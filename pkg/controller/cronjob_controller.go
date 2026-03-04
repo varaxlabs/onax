@@ -15,8 +15,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	"github.com/kubeshield/k8s-cronjob-monitor/pkg/metrics"
-	"github.com/kubeshield/k8s-cronjob-monitor/pkg/models"
+	"github.com/varaxlabs/varax-monitor/pkg/metrics"
+	"github.com/varaxlabs/varax-monitor/pkg/models"
 )
 
 // CronJobReconciler reconciles CronJob objects and updates Prometheus metrics.

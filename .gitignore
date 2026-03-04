@@ -1,11 +1,14 @@
 # Binaries
 bin/
-operator
+/operator
 
 # Test artifacts
 cover.out
 coverage.html
 testbin/
+
+# Claude
+.claude/
 
 # IDE
 .idea/
@@ -24,6 +27,9 @@ vendor/
 # Kubernetes
 kubeconfig
 *.kubeconfig
+
+# Scripts
+hack/
 
 # Temporary files
 tmp/

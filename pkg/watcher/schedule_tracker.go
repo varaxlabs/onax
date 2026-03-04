@@ -9,7 +9,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/kubeshield/k8s-cronjob-monitor/pkg/metrics"
+	"github.com/varaxlabs/varax-monitor/pkg/metrics"
 )
 
 // ScheduleTracker monitors CronJob schedules and detects missed executions.

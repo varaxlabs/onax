@@ -1,7 +1,7 @@
-# k8s-cronjob-monitor Makefile
+# varax-monitor Makefile
 
 # Image URL
-IMG ?= ghcr.io/kubeshield/k8s-cronjob-monitor:latest
+IMG ?= ghcr.io/varaxlabs/varax-monitor:latest
 
 # Get the currently used golang install path
 GOPATH ?= $(shell go env GOPATH)
@@ -80,17 +80,17 @@ $(SETUP_ENVTEST):
 
 .PHONY: deploy
 deploy: ## Deploy to cluster using Helm
-	helm upgrade --install k8s-cronjob-monitor ./deploy/helm/k8s-cronjob-monitor \
+	helm upgrade --install varax-monitor ./deploy/helm/varax-monitor \
 		--namespace monitoring \
 		--create-namespace
 
 .PHONY: undeploy
 undeploy: ## Remove from cluster
-	helm uninstall k8s-cronjob-monitor --namespace monitoring
+	helm uninstall varax-monitor --namespace monitoring
 
 .PHONY: manifests
 manifests: ## Generate raw YAML manifests from Helm
-	helm template k8s-cronjob-monitor ./deploy/helm/k8s-cronjob-monitor \
+	helm template varax-monitor ./deploy/helm/varax-monitor \
 		--namespace monitoring > deploy/manifests/operator.yaml
 
 ##@ Local Testing

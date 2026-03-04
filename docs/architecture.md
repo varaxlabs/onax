@@ -2,7 +2,7 @@
 
 ## Overview
 
-k8s-cronjob-monitor is a Kubernetes operator built with [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) that monitors CronJob resources and exposes Prometheus metrics.
+varax-monitor is a Kubernetes operator built with [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) that monitors CronJob resources and exposes Prometheus metrics.
 
 ## Components
 

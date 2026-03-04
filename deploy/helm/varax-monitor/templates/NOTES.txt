@@ -4,25 +4,25 @@ Your CronJobs are now being monitored.
 
 1. Get the metrics endpoint:
    kubectl port-forward -n {{ .Release.Namespace }} \
-     svc/{{ include "k8s-cronjob-monitor.fullname" . }} {{ .Values.metrics.port }}:{{ .Values.metrics.port }}
+     svc/{{ include "varax-monitor.fullname" . }} {{ .Values.metrics.port }}:{{ .Values.metrics.port }}
 
    Then visit: http://localhost:{{ .Values.metrics.port }}/metrics
 
 2. Import Grafana dashboards:
-   - Overview dashboard: https://github.com/kubeshield/k8s-cronjob-monitor/blob/main/dashboards/cronjob-overview.json
-   - Details dashboard: https://github.com/kubeshield/k8s-cronjob-monitor/blob/main/dashboards/cronjob-details.json
+   - Overview dashboard: https://github.com/varaxlabs/varax-monitor/blob/main/dashboards/cronjob-overview.json
+   - Details dashboard: https://github.com/varaxlabs/varax-monitor/blob/main/dashboards/cronjob-details.json
 
 3. Configure Prometheus alerts:
-   kubectl apply -f https://raw.githubusercontent.com/kubeshield/k8s-cronjob-monitor/main/alerts/cronjob-alerts.yaml
+   kubectl apply -f https://raw.githubusercontent.com/varaxlabs/varax-monitor/main/alerts/cronjob-alerts.yaml
 
 4. Verify the installation:
-   kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "k8s-cronjob-monitor.name" . }}
+   kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "varax-monitor.name" . }}
 
 For more information, visit:
-https://github.com/kubeshield/k8s-cronjob-monitor
+https://github.com/varaxlabs/varax-monitor
 
 ---
-Built with love by KubeShield
-https://kubeshield.io
+Built with love by Varax Labs
+https://varaxlabs.io
 
-Discover more Kubernetes tools at https://kubeshield.io
+Discover more Kubernetes tools at https://varaxlabs.io

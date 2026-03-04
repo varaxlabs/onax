@@ -30,28 +30,33 @@ jobs:
       - name: Build and push Docker image
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          docker build -t ghcr.io/kubeshield/k8s-cronjob-monitor:${VERSION} .
-          docker tag ghcr.io/kubeshield/k8s-cronjob-monitor:${VERSION} ghcr.io/kubeshield/k8s-cronjob-monitor:latest
-          docker push ghcr.io/kubeshield/k8s-cronjob-monitor:${VERSION}
-          docker push ghcr.io/kubeshield/k8s-cronjob-monitor:latest
+          docker build -t ghcr.io/varaxlabs/varax-monitor:${VERSION} .
+          docker tag ghcr.io/varaxlabs/varax-monitor:${VERSION} ghcr.io/varaxlabs/varax-monitor:latest
+          docker push ghcr.io/varaxlabs/varax-monitor:${VERSION}
+          docker push ghcr.io/varaxlabs/varax-monitor:latest
 
       - name: Build release binaries
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o k8s-cronjob-monitor-linux-amd64 cmd/operator/main.go
-          GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o k8s-cronjob-monitor-linux-arm64 cmd/operator/main.go
-          GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o k8s-cronjob-monitor-darwin-amd64 cmd/operator/main.go
-          GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o k8s-cronjob-monitor-darwin-arm64 cmd/operator/main.go
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o varax-monitor-linux-amd64 cmd/operator/main.go
+          GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o varax-monitor-linux-arm64 cmd/operator/main.go
+          GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o varax-monitor-darwin-amd64 cmd/operator/main.go
+          GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o varax-monitor-darwin-arm64 cmd/operator/main.go
 
       - name: Package Helm chart
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
-          helm package deploy/helm/k8s-cronjob-monitor --version ${VERSION} --app-version ${VERSION}
+          helm package deploy/helm/varax-monitor --version ${VERSION} --app-version ${VERSION}
+
+      - name: Push Helm chart to GHCR
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          helm push varax-monitor-${VERSION}.tgz oci://ghcr.io/varaxlabs/charts
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
           files: |
-            k8s-cronjob-monitor-*
-            k8s-cronjob-monitor-*.tgz
+            varax-monitor-*
+            varax-monitor-*.tgz

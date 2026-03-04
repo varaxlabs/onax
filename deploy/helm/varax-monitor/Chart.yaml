@@ -1,5 +1,5 @@
 apiVersion: v2
-name: k8s-cronjob-monitor
+name: varax-monitor
 description: Dead-simple CronJob monitoring for Kubernetes with Prometheus and Grafana
 type: application
 version: 0.1.0
@@ -10,9 +10,9 @@ keywords:
   - monitoring
   - prometheus
   - grafana
-home: https://github.com/kubeshield/k8s-cronjob-monitor
+home: https://github.com/varaxlabs/varax-monitor
 sources:
-  - https://github.com/kubeshield/k8s-cronjob-monitor
+  - https://github.com/varaxlabs/varax-monitor
 maintainers:
-  - name: KubeShield
-    url: https://kubeshield.io
+  - name: Varax Labs
+    url: https://varaxlabs.io

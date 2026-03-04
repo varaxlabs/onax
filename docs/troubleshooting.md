@@ -10,13 +10,13 @@
 
 1. **Operator not running**
    ```bash
-   kubectl get pods -n monitoring -l app.kubernetes.io/name=k8s-cronjob-monitor
+   kubectl get pods -n monitoring -l app.kubernetes.io/name=varax-monitor
    ```
    Check the pod is in `Running` state.
 
 2. **Prometheus not scraping**
    - Check Prometheus targets: Status > Targets
-   - Look for `k8s-cronjob-monitor` target
+   - Look for `varax-monitor` target
    - If missing, check ServiceMonitor or scrape config
 
 3. **No CronJobs in cluster**
@@ -27,7 +27,7 @@
 
 4. **RBAC issues**
    ```bash
-   kubectl logs -n monitoring -l app.kubernetes.io/name=k8s-cronjob-monitor
+   kubectl logs -n monitoring -l app.kubernetes.io/name=varax-monitor
    ```
    Look for permission errors.
 
@@ -173,16 +173,16 @@
 Enable debug logging for more verbose output:
 
 ```bash
-helm upgrade k8s-cronjob-monitor ./deploy/helm/k8s-cronjob-monitor \
+helm upgrade varax-monitor oci://ghcr.io/varaxlabs/charts/varax-monitor \
   --set logging.level=debug
 ```
 
 ## Getting Help
 
-1. Check [GitHub Issues](https://github.com/kubeshield/k8s-cronjob-monitor/issues)
+1. Check [GitHub Issues](https://github.com/varaxlabs/varax-monitor/issues)
 2. Search existing discussions
 3. Open a new issue with:
    - Kubernetes version
-   - k8s-cronjob-monitor version
+   - varax-monitor version
    - Relevant logs
    - Steps to reproduce

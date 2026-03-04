@@ -1,4 +1,4 @@
-# Contributing to k8s-cronjob-monitor
+# Contributing to varax-monitor
 
 Thank you for your interest in contributing! This guide will help you get started.
 
@@ -16,8 +16,8 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 ```bash
 # Clone the repository
-git clone https://github.com/kubeshield/k8s-cronjob-monitor.git
-cd k8s-cronjob-monitor
+git clone https://github.com/varaxlabs/varax-monitor.git
+cd varax-monitor
 
 # Install dependencies
 go mod download
@@ -39,7 +39,7 @@ make docker-build
 make kind-create
 
 # Load the image into kind
-kind load docker-image ghcr.io/kubeshield/k8s-cronjob-monitor:latest --name cronjob-monitor-test
+kind load docker-image ghcr.io/varaxlabs/varax-monitor:latest --name cronjob-monitor-test
 
 # Deploy
 make deploy
@@ -48,7 +48,7 @@ make deploy
 kubectl apply -f examples/basic-cronjob.yaml
 
 # Check metrics
-kubectl port-forward -n monitoring svc/k8s-cronjob-monitor 8080:8080
+kubectl port-forward -n monitoring svc/varax-monitor 8080:8080
 curl http://localhost:8080/metrics | grep cronjob_monitor
 ```
 

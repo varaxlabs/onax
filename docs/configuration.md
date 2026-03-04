@@ -2,14 +2,14 @@
 
 ## Helm Values
 
-The following table lists the configurable parameters of the k8s-cronjob-monitor chart.
+The following table lists the configurable parameters of the varax-monitor chart.
 
 ### General
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `replicaCount` | Number of operator replicas | `1` |
-| `image.repository` | Container image repository | `ghcr.io/kubeshield/k8s-cronjob-monitor` |
+| `image.repository` | Container image repository | `ghcr.io/varaxlabs/varax-monitor` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `image.tag` | Image tag (defaults to appVersion) | `""` |
 | `imagePullSecrets` | Image pull secrets | `[]` |
@@ -92,7 +92,7 @@ These can be set via Helm values or directly in the deployment:
 ### Minimal
 ```yaml
 # Use all defaults - monitors all namespaces
-helm install k8s-cronjob-monitor ./deploy/helm/k8s-cronjob-monitor \
+helm install varax-monitor oci://ghcr.io/varaxlabs/charts/varax-monitor \
   --namespace monitoring --create-namespace
 ```
 

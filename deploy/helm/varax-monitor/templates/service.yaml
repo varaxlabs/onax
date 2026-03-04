@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "k8s-cronjob-monitor.fullname" . }}
+  name: {{ include "varax-monitor.fullname" . }}
   labels:
-    {{- include "k8s-cronjob-monitor.labels" . | nindent 4 }}
+    {{- include "varax-monitor.labels" . | nindent 4 }}
 spec:
   type: ClusterIP
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    {{- include "k8s-cronjob-monitor.selectorLabels" . | nindent 4 }}
+    {{- include "varax-monitor.selectorLabels" . | nindent 4 }}

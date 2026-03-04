@@ -4,7 +4,7 @@ metadata:
   name: cronjob-monitor-alerts
   namespace: monitoring
   labels:
-    app: k8s-cronjob-monitor
+    app: varax-monitor
 data:
   alerts.yaml: |
     groups:
@@ -19,7 +19,7 @@ data:
         annotations:
           summary: "CronJob {{ $labels.cronjob }} failed"
           description: "CronJob {{ $labels.cronjob }} in namespace {{ $labels.namespace }} has failed its last execution."
-          runbook_url: "https://github.com/kubeshield/k8s-cronjob-monitor/blob/main/docs/troubleshooting.md#cronjob-failed"
+          runbook_url: "https://github.com/varaxlabs/varax-monitor/blob/main/docs/troubleshooting.md#cronjob-failed"
 
       - alert: CronJobMissedSchedule
         expr: increase(cronjob_monitor_missed_schedules_total[15m]) > 0
@@ -29,7 +29,7 @@ data:
         annotations:
           summary: "CronJob {{ $labels.cronjob }} missed schedule"
           description: "CronJob {{ $labels.cronjob }} in namespace {{ $labels.namespace }} missed its scheduled execution."
-          runbook_url: "https://github.com/kubeshield/k8s-cronjob-monitor/blob/main/docs/troubleshooting.md#missed-schedule"
+          runbook_url: "https://github.com/varaxlabs/varax-monitor/blob/main/docs/troubleshooting.md#missed-schedule"
 
       - alert: CronJobSlowExecution
         expr: cronjob_monitor_execution_duration_seconds > 3600
@@ -39,7 +39,7 @@ data:
         annotations:
           summary: "CronJob {{ $labels.cronjob }} is running slow"
           description: "CronJob {{ $labels.cronjob }} in namespace {{ $labels.namespace }} took {{ $value | humanizeDuration }} (>1 hour)."
-          runbook_url: "https://github.com/kubeshield/k8s-cronjob-monitor/blob/main/docs/troubleshooting.md#slow-execution"
+          runbook_url: "https://github.com/varaxlabs/varax-monitor/blob/main/docs/troubleshooting.md#slow-execution"
 
       - alert: CronJobLowSuccessRate
         expr: cronjob_monitor_success_rate < 0.9
@@ -49,7 +49,7 @@ data:
         annotations:
           summary: "CronJob {{ $labels.cronjob }} has low success rate"
           description: "CronJob {{ $labels.cronjob }} in namespace {{ $labels.namespace }} has success rate of {{ $value | humanizePercentage }}."
-          runbook_url: "https://github.com/kubeshield/k8s-cronjob-monitor/blob/main/docs/troubleshooting.md#low-success-rate"
+          runbook_url: "https://github.com/varaxlabs/varax-monitor/blob/main/docs/troubleshooting.md#low-success-rate"
 
       - alert: CronJobNoRecentSuccess
         expr: (time() - cronjob_monitor_last_success_timestamp) > 172800
@@ -59,4 +59,4 @@ data:
         annotations:
           summary: "CronJob {{ $labels.cronjob }} has no recent success"
           description: "CronJob {{ $labels.cronjob }} in namespace {{ $labels.namespace }} has not succeeded in over 48 hours."
-          runbook_url: "https://github.com/kubeshield/k8s-cronjob-monitor/blob/main/docs/troubleshooting.md#no-recent-success"
+          runbook_url: "https://github.com/varaxlabs/varax-monitor/blob/main/docs/troubleshooting.md#no-recent-success"

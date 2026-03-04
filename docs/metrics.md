@@ -1,6 +1,6 @@
 # Metrics Reference
 
-k8s-cronjob-monitor exposes all metrics on the `/metrics` endpoint using the Prometheus exposition format.
+varax-monitor exposes all metrics on the `/metrics` endpoint using the Prometheus exposition format.
 
 ## Metric Prefix
 

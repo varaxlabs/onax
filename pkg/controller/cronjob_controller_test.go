@@ -17,7 +17,7 @@ import (
 
 	io_prometheus_client "github.com/prometheus/client_model/go"
 
-	"github.com/kubeshield/k8s-cronjob-monitor/pkg/metrics"
+	"github.com/varaxlabs/varax-monitor/pkg/metrics"
 )
 
 func getGaugeValue(g interface{ Write(*io_prometheus_client.Metric) error }) float64 {

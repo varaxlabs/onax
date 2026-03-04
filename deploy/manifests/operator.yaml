@@ -1,25 +1,25 @@
 ---
-# Source: k8s-cronjob-monitor/templates/serviceaccount.yaml
+# Source: varax-monitor/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: k8s-cronjob-monitor
+  name: varax-monitor
   labels:
-    helm.sh/chart: k8s-cronjob-monitor-0.1.0
-    app.kubernetes.io/name: k8s-cronjob-monitor
-    app.kubernetes.io/instance: k8s-cronjob-monitor
+    helm.sh/chart: varax-monitor-0.1.0
+    app.kubernetes.io/name: varax-monitor
+    app.kubernetes.io/instance: varax-monitor
     app.kubernetes.io/version: "1.0.0"
     app.kubernetes.io/managed-by: Helm
 ---
-# Source: k8s-cronjob-monitor/templates/clusterrole.yaml
+# Source: varax-monitor/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: k8s-cronjob-monitor
+  name: varax-monitor
   labels:
-    helm.sh/chart: k8s-cronjob-monitor-0.1.0
-    app.kubernetes.io/name: k8s-cronjob-monitor
-    app.kubernetes.io/instance: k8s-cronjob-monitor
+    helm.sh/chart: varax-monitor-0.1.0
+    app.kubernetes.io/name: varax-monitor
+    app.kubernetes.io/instance: varax-monitor
     app.kubernetes.io/version: "1.0.0"
     app.kubernetes.io/managed-by: Helm
 rules:
@@ -43,35 +43,35 @@ rules:
     resources: ["pods/log"]
     verbs: ["get"]
 ---
-# Source: k8s-cronjob-monitor/templates/clusterrolebinding.yaml
+# Source: varax-monitor/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: k8s-cronjob-monitor
+  name: varax-monitor
   labels:
-    helm.sh/chart: k8s-cronjob-monitor-0.1.0
-    app.kubernetes.io/name: k8s-cronjob-monitor
-    app.kubernetes.io/instance: k8s-cronjob-monitor
+    helm.sh/chart: varax-monitor-0.1.0
+    app.kubernetes.io/name: varax-monitor
+    app.kubernetes.io/instance: varax-monitor
     app.kubernetes.io/version: "1.0.0"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: k8s-cronjob-monitor
+  name: varax-monitor
 subjects:
   - kind: ServiceAccount
-    name: k8s-cronjob-monitor
+    name: varax-monitor
     namespace: monitoring
 ---
-# Source: k8s-cronjob-monitor/templates/service.yaml
+# Source: varax-monitor/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: k8s-cronjob-monitor
+  name: varax-monitor
   labels:
-    helm.sh/chart: k8s-cronjob-monitor-0.1.0
-    app.kubernetes.io/name: k8s-cronjob-monitor
-    app.kubernetes.io/instance: k8s-cronjob-monitor
+    helm.sh/chart: varax-monitor-0.1.0
+    app.kubernetes.io/name: varax-monitor
+    app.kubernetes.io/instance: varax-monitor
     app.kubernetes.io/version: "1.0.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -82,46 +82,46 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app.kubernetes.io/name: k8s-cronjob-monitor
-    app.kubernetes.io/instance: k8s-cronjob-monitor
+    app.kubernetes.io/name: varax-monitor
+    app.kubernetes.io/instance: varax-monitor
 ---
-# Source: k8s-cronjob-monitor/templates/deployment.yaml
+# Source: varax-monitor/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: k8s-cronjob-monitor
+  name: varax-monitor
   labels:
-    helm.sh/chart: k8s-cronjob-monitor-0.1.0
-    app.kubernetes.io/name: k8s-cronjob-monitor
-    app.kubernetes.io/instance: k8s-cronjob-monitor
+    helm.sh/chart: varax-monitor-0.1.0
+    app.kubernetes.io/name: varax-monitor
+    app.kubernetes.io/instance: varax-monitor
     app.kubernetes.io/version: "1.0.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: k8s-cronjob-monitor
-      app.kubernetes.io/instance: k8s-cronjob-monitor
+      app.kubernetes.io/name: varax-monitor
+      app.kubernetes.io/instance: varax-monitor
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: k8s-cronjob-monitor
-        app.kubernetes.io/instance: k8s-cronjob-monitor
+        app.kubernetes.io/name: varax-monitor
+        app.kubernetes.io/instance: varax-monitor
     spec:
-      serviceAccountName: k8s-cronjob-monitor
+      serviceAccountName: varax-monitor
       securityContext:
         fsGroup: 65532
         runAsNonRoot: true
         runAsUser: 65532
       containers:
-        - name: k8s-cronjob-monitor
+        - name: varax-monitor
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
               - ALL
             readOnlyRootFilesystem: true
-          image: "ghcr.io/kubeshield/k8s-cronjob-monitor:1.0.0"
+          image: "ghcr.io/varaxlabs/varax-monitor:1.0.0"
           imagePullPolicy: IfNotPresent
           args:
             - --metrics-bind-address=:8080
@@ -153,15 +153,15 @@ spec:
               cpu: 50m
               memory: 64Mi
 ---
-# Source: k8s-cronjob-monitor/templates/servicemonitor.yaml
+# Source: varax-monitor/templates/servicemonitor.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: k8s-cronjob-monitor
+  name: varax-monitor
   labels:
-    helm.sh/chart: k8s-cronjob-monitor-0.1.0
-    app.kubernetes.io/name: k8s-cronjob-monitor
-    app.kubernetes.io/instance: k8s-cronjob-monitor
+    helm.sh/chart: varax-monitor-0.1.0
+    app.kubernetes.io/name: varax-monitor
+    app.kubernetes.io/instance: varax-monitor
     app.kubernetes.io/version: "1.0.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -174,5 +174,5 @@ spec:
       - monitoring
   selector:
     matchLabels:
-      app.kubernetes.io/name: k8s-cronjob-monitor
-      app.kubernetes.io/instance: k8s-cronjob-monitor
+      app.kubernetes.io/name: varax-monitor
+      app.kubernetes.io/instance: varax-monitor

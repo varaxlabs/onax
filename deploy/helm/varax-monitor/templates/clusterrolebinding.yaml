@@ -1,14 +1,14 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "k8s-cronjob-monitor.fullname" . }}
+  name: {{ include "varax-monitor.fullname" . }}
   labels:
-    {{- include "k8s-cronjob-monitor.labels" . | nindent 4 }}
+    {{- include "varax-monitor.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "k8s-cronjob-monitor.fullname" . }}
+  name: {{ include "varax-monitor.fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "k8s-cronjob-monitor.serviceAccountName" . }}
+    name: {{ include "varax-monitor.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}

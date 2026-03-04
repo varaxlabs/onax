@@ -1,6 +1,6 @@
 # Grafana Dashboards
 
-This directory contains pre-built Grafana dashboards for k8s-cronjob-monitor.
+This directory contains pre-built Grafana dashboards for varax-monitor.
 
 ## Available Dashboards
 
@@ -33,14 +33,14 @@ Add to your Grafana provisioning config:
 ```yaml
 apiVersion: 1
 providers:
-  - name: 'k8s-cronjob-monitor'
+  - name: 'varax-monitor'
     folder: 'Kubernetes'
     type: file
     options:
-      path: /var/lib/grafana/dashboards/k8s-cronjob-monitor
+      path: /var/lib/grafana/dashboards/varax-monitor
 ```
 
-Then mount the dashboard JSON files to `/var/lib/grafana/dashboards/k8s-cronjob-monitor/`.
+Then mount the dashboard JSON files to `/var/lib/grafana/dashboards/varax-monitor/`.
 
 ### Method 3: ConfigMap
 ```bash

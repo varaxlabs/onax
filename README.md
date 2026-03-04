@@ -1,8 +1,8 @@
-# k8s-cronjob-monitor
+# varax-monitor
 
-[![GitHub Stars](https://img.shields.io/github/stars/kubeshield/k8s-cronjob-monitor)](https://github.com/kubeshield/k8s-cronjob-monitor)
+[![GitHub Stars](https://img.shields.io/github/stars/varaxlabs/varax-monitor)](https://github.com/varaxlabs/varax-monitor)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/kubeshield/k8s-cronjob-monitor)](https://goreportcard.com/report/github.com/kubeshield/k8s-cronjob-monitor)
+[![Go Report Card](https://goreportcard.com/badge/github.com/varaxlabs/varax-monitor)](https://goreportcard.com/report/github.com/varaxlabs/varax-monitor)
 
 **Dead-simple CronJob monitoring for Kubernetes with Prometheus and Grafana**
 
@@ -21,16 +21,13 @@ Stop paying for SaaS CronJob monitoring. Monitor your Kubernetes CronJobs with y
 ## Quick Start
 
 ```bash
-# Add Helm repository
-helm repo add k8s-cronjob-monitor https://kubeshield.github.io/k8s-cronjob-monitor
-
-# Install
-helm install k8s-cronjob-monitor k8s-cronjob-monitor/k8s-cronjob-monitor \
+# Install from OCI registry
+helm install varax-monitor oci://ghcr.io/varaxlabs/charts/varax-monitor \
   --namespace monitoring \
   --create-namespace
 
 # Verify installation
-kubectl get pods -n monitoring -l app.kubernetes.io/name=k8s-cronjob-monitor
+kubectl get pods -n monitoring -l app.kubernetes.io/name=varax-monitor
 ```
 
 That's it! Your CronJobs are now being monitored.
@@ -74,12 +71,12 @@ Pre-configured Prometheus alerts for:
 
 ```bash
 # Apply alert rules (Prometheus Operator)
-kubectl apply -f https://raw.githubusercontent.com/kubeshield/k8s-cronjob-monitor/main/alerts/cronjob-alerts.yaml
+kubectl apply -f https://raw.githubusercontent.com/varaxlabs/varax-monitor/main/alerts/cronjob-alerts.yaml
 ```
 
 ## Comparison
 
-| Feature | k8s-cronjob-monitor | Cronitor | Healthchecks.io | DIY Prometheus |
+| Feature | varax-monitor | Cronitor | Healthchecks.io | DIY Prometheus |
 |---------|---------------------|----------|-----------------|----------------|
 | **Cost** | **Free** | $21-449/mo | $0-80/mo | Free (20hr setup) |
 | **Setup time** | **1 command** | Manual per job | Manual per job | Hours of work |
@@ -95,7 +92,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubeshield/k8s-cronjob-monito
 ```yaml
 # values.yaml
 image:
-  repository: ghcr.io/kubeshield/k8s-cronjob-monitor
+  repository: ghcr.io/varaxlabs/varax-monitor
   tag: v1.0.0
 
 resources:
@@ -127,8 +124,8 @@ logging:
 
 ```bash
 # Clone repository
-git clone https://github.com/kubeshield/k8s-cronjob-monitor.git
-cd k8s-cronjob-monitor
+git clone https://github.com/varaxlabs/varax-monitor.git
+cd varax-monitor
 
 # Install dependencies
 go mod download
@@ -174,8 +171,8 @@ Apache 2.0 - See [LICENSE](LICENSE)
 
 ## Related Projects
 
-- **[KubeShield](https://kubeshield.io)** - Kubernetes security and compliance tools
+- **[Varax Labs](https://varaxlabs.io)** - Kubernetes security and compliance tools
 
 ---
 
-**Built with love by [KubeShield](https://kubeshield.io)**
+**Built with love by [Varax Labs](https://varaxlabs.io)**

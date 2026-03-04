@@ -1,4 +1,4 @@
-module github.com/kubeshield/k8s-cronjob-monitor
+module github.com/varaxlabs/varax-monitor
 
 go 1.25.0
 
