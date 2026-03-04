@@ -91,4 +91,17 @@ jobs:
         run: |
           kubectl port-forward -n monitoring svc/varax-monitor 8080:8080 &
           sleep 5
-          curl -sf http://localhost:8080/metrics | grep cronjob_monitor
+          for i in $(seq 1 12); do
+            if curl -sf http://localhost:8080/metrics | grep -q cronjob_monitor; then
+              echo "Found cronjob_monitor metrics"
+              exit 0
+            fi
+            echo "Attempt $i: metrics not yet available, retrying in 5s..."
+            sleep 5
+          done
+          echo "Metrics output:"
+          curl -sf http://localhost:8080/metrics || true
+          echo "Operator logs:"
+          kubectl logs -n monitoring -l app.kubernetes.io/name=varax-monitor --tail=50 || true
+          echo "FAIL: cronjob_monitor metrics not found after 60s"
+          exit 1
