@@ -5,6 +5,7 @@ on:
     branches: [main]
 
 permissions:
+  contents: read
   packages: write
 
 jobs:
@@ -29,7 +30,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/kubeshield/k8s-cronjob-monitor:latest
-            ghcr.io/kubeshield/k8s-cronjob-monitor:${{ github.sha }}
+            ghcr.io/varaxlabs/varax-monitor:latest
+            ghcr.io/varaxlabs/varax-monitor:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
