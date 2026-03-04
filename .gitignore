@@ -1,5 +1,6 @@
 # Binaries
 bin/
+/main
 /operator
 
 # Test artifacts
@@ -27,9 +28,6 @@ vendor/
 # Kubernetes
 kubeconfig
 *.kubeconfig
-
-# Scripts
-hack/
 
 # Temporary files
 tmp/
