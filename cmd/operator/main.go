@@ -10,6 +10,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
 	"github.com/varaxlabs/varax-monitor/pkg/controller"
@@ -48,8 +49,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Register our custom metrics with controller-runtime's default Prometheus registry
-	metricsCollector.RegisterWithPrometheus()
+	// Register our custom metrics with controller-runtime's metrics registry
+	metricsCollector.RegisterWithRegistry(ctrlmetrics.Registry)
 
 	// Setup CronJob reconciler
 	reconciler := &controller.CronJobReconciler{

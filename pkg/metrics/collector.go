@@ -214,10 +214,10 @@ func (c *Collector) RecordMissedSchedule(namespace, cronjob string) {
 	c.missedSchedules.WithLabelValues(namespace, cronjob).Inc()
 }
 
-// RegisterWithPrometheus registers all metric collectors with the default prometheus registry.
-// This is used when integrating with controller-runtime's built-in metrics server.
-func (c *Collector) RegisterWithPrometheus() {
-	prometheus.MustRegister(
+// RegisterWithRegistry registers all metric collectors with the given registry.
+// Pass controller-runtime's metrics.Registry to expose metrics on its /metrics endpoint.
+func (c *Collector) RegisterWithRegistry(reg prometheus.Registerer) {
+	reg.MustRegister(
 		c.executionStatus,
 		c.executionDuration,
 		c.lastSuccessTime,
