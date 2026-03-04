@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -52,7 +55,7 @@ jobs:
       - name: Build binary
         run: CGO_ENABLED=0 go build -o bin/operator cmd/operator/main.go
       - name: Build Docker image
-        run: docker build -t ghcr.io/kubeshield/k8s-cronjob-monitor:ci .
+        run: docker build -t ghcr.io/varaxlabs/varax-monitor:ci .
 
   e2e:
     runs-on: ubuntu-latest
@@ -68,23 +71,23 @@ jobs:
           cluster_name: e2e-test
       - name: Build and load image
         run: |
-          docker build -t ghcr.io/kubeshield/k8s-cronjob-monitor:e2e .
-          kind load docker-image ghcr.io/kubeshield/k8s-cronjob-monitor:e2e --name e2e-test
+          docker build -t ghcr.io/varaxlabs/varax-monitor:e2e .
+          kind load docker-image ghcr.io/varaxlabs/varax-monitor:e2e --name e2e-test
       - name: Deploy operator
         run: |
-          helm install k8s-cronjob-monitor ./deploy/helm/k8s-cronjob-monitor \
+          helm install varax-monitor ./deploy/helm/varax-monitor \
             --namespace monitoring \
             --create-namespace \
             --set image.tag=e2e \
             --wait --timeout 120s
       - name: Verify operator is running
         run: |
-          kubectl get pods -n monitoring -l app.kubernetes.io/name=k8s-cronjob-monitor
-          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=k8s-cronjob-monitor -n monitoring --timeout=60s
+          kubectl get pods -n monitoring -l app.kubernetes.io/name=varax-monitor
+          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=varax-monitor -n monitoring --timeout=60s
       - name: Deploy test CronJob
         run: kubectl apply -f examples/basic-cronjob.yaml
       - name: Check metrics endpoint
         run: |
-          kubectl port-forward -n monitoring svc/k8s-cronjob-monitor 8080:8080 &
+          kubectl port-forward -n monitoring svc/varax-monitor 8080:8080 &
           sleep 5
           curl -sf http://localhost:8080/metrics | grep cronjob_monitor
