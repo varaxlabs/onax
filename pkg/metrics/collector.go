@@ -10,7 +10,9 @@ import (
 
 // Collector holds all Prometheus metrics for CronJob monitoring.
 type Collector struct {
-	Registry *prometheus.Registry
+	// TestRegistry is set only by NewCollector() for test use.
+	// Production code should use NewCollectorFor() instead.
+	TestRegistry *prometheus.Registry
 
 	// Gauges
 	executionStatus   *prometheus.GaugeVec
@@ -35,15 +37,48 @@ type Collector struct {
 	mu               sync.Mutex
 }
 
-// NewCollector creates a new metrics collector with an isolated registry.
-func NewCollector() *Collector {
-	return NewCollectorWithRegistry(prometheus.NewRegistry())
+// allCollectors returns the full list of metric collectors for registration.
+func (c *Collector) allCollectors() []prometheus.Collector {
+	return []prometheus.Collector{
+		c.executionStatus,
+		c.executionDuration,
+		c.lastSuccessTime,
+		c.lastFailureTime,
+		c.nextScheduleTime,
+		c.activeJobs,
+		c.successRate,
+		c.scheduleDelay,
+		c.info,
+		c.executionsTotal,
+		c.missedSchedules,
+	}
 }
 
-// NewCollectorWithRegistry creates a new metrics collector with the given registry.
-func NewCollectorWithRegistry(reg *prometheus.Registry) *Collector {
+// NewCollectorFor creates a new metrics collector and registers all metrics
+// with the given registry. Use this in production (pass controller-runtime's
+// metrics.Registry).
+func NewCollectorFor(reg prometheus.Registerer) *Collector {
+	c := newCollector()
+	for _, col := range c.allCollectors() {
+		reg.MustRegister(col)
+	}
+	return c
+}
+
+// NewCollector creates a new metrics collector with an isolated registry.
+// Intended for use in tests — exposes TestRegistry for Gather().
+func NewCollector() *Collector {
+	reg := prometheus.NewRegistry()
+	c := newCollector()
+	for _, col := range c.allCollectors() {
+		reg.MustRegister(col)
+	}
+	c.TestRegistry = reg
+	return c
+}
+
+func newCollector() *Collector {
 	c := &Collector{
-		Registry:         reg,
 		lastKnownSuccess: make(map[string]int64),
 		lastKnownFailure: make(map[string]int64),
 	}
@@ -136,20 +171,6 @@ func NewCollectorWithRegistry(reg *prometheus.Registry) *Collector {
 		[]string{"namespace", "cronjob"},
 	)
 
-	reg.MustRegister(
-		c.executionStatus,
-		c.executionDuration,
-		c.lastSuccessTime,
-		c.lastFailureTime,
-		c.nextScheduleTime,
-		c.activeJobs,
-		c.successRate,
-		c.scheduleDelay,
-		c.info,
-		c.executionsTotal,
-		c.missedSchedules,
-	)
-
 	return c
 }
 
@@ -159,7 +180,6 @@ func (c *Collector) SetInfo(namespace, name, schedule string, suspended bool) {
 	if suspended {
 		suspendedStr = "true"
 	}
-	// Delete any previous info labels for this CronJob (schedule/suspended may change)
 	c.info.DeletePartialMatch(prometheus.Labels{"namespace": namespace, "cronjob": name})
 	c.info.WithLabelValues(namespace, name, schedule, suspendedStr).Set(1)
 }
@@ -200,7 +220,6 @@ func (c *Collector) UpdateAll(status *models.CronJobStatus) {
 		c.successRate.WithLabelValues(ns, name).Set(float64(status.SuccessCount) / float64(total))
 	}
 
-	// Info metric
 	c.SetInfo(ns, name, status.Schedule, status.Suspended)
 }
 
@@ -212,35 +231,6 @@ func (c *Collector) UpdateNextSchedule(namespace, cronjob string, timestamp int6
 // RecordMissedSchedule increments the missed schedule counter.
 func (c *Collector) RecordMissedSchedule(namespace, cronjob string) {
 	c.missedSchedules.WithLabelValues(namespace, cronjob).Inc()
-}
-
-// RegisterWithRegistry registers all metric collectors with the given registry.
-// Pass controller-runtime's metrics.Registry to expose metrics on its /metrics endpoint.
-func (c *Collector) RegisterWithRegistry(reg prometheus.Registerer) {
-	reg.MustRegister(
-		c.executionStatus,
-		c.executionDuration,
-		c.lastSuccessTime,
-		c.lastFailureTime,
-		c.nextScheduleTime,
-		c.activeJobs,
-		c.successRate,
-		c.scheduleDelay,
-		c.info,
-		c.executionsTotal,
-		c.missedSchedules,
-	)
-}
-
-// TestStatus creates a minimal CronJobStatus for testing.
-func TestStatus(namespace, name string) models.CronJobStatus {
-	return models.CronJobStatus{
-		Namespace:      namespace,
-		Name:           name,
-		Schedule:       "*/5 * * * *",
-		LastExecStatus: 1,
-		SuccessCount:   1,
-	}
 }
 
 // RemoveCronJob cleans up all metrics when a CronJob is deleted.

@@ -26,7 +26,7 @@ func getCounterValue(c *prometheus.CounterVec, labels ...string) float64 {
 func TestNewCollector(t *testing.T) {
 	c := NewCollector()
 	require.NotNil(t, c)
-	require.NotNil(t, c.Registry)
+	require.NotNil(t, c.TestRegistry)
 }
 
 func TestUpdateAll_Success(t *testing.T) {
@@ -140,7 +140,7 @@ func TestRemoveCronJob(t *testing.T) {
 	c.RemoveCronJob("default", "test-cj")
 
 	// After removal, metric families should be cleaned
-	mfs, _ := c.Registry.Gather()
+	mfs, _ := c.TestRegistry.Gather()
 	for _, mf := range mfs {
 		for _, m := range mf.GetMetric() {
 			for _, lp := range m.GetLabel() {

@@ -60,7 +60,7 @@ func TestCheckCronJobSchedule_MissedSchedule(t *testing.T) {
 	tracker.checkCronJobSchedule(ctx, cj, time.Now())
 
 	// Should detect missed schedule and record it
-	mfs, _ := collector.Registry.Gather()
+	mfs, _ := collector.TestRegistry.Gather()
 	found := false
 	for _, mf := range mfs {
 		if mf.GetName() == "cronjob_monitor_missed_schedules_total" {
@@ -94,7 +94,7 @@ func TestCheckCronJobSchedule_WithinGracePeriod(t *testing.T) {
 	tracker.checkCronJobSchedule(ctx, cj, time.Now())
 
 	// Should NOT record missed schedule
-	mfs, _ := collector.Registry.Gather()
+	mfs, _ := collector.TestRegistry.Gather()
 	for _, mf := range mfs {
 		if mf.GetName() == "cronjob_monitor_missed_schedules_total" {
 			for _, m := range mf.GetMetric() {
@@ -123,7 +123,7 @@ func TestCheckCronJobSchedule_Suspended(t *testing.T) {
 	tracker.checkCronJobSchedule(ctx, cj, time.Now())
 
 	// Suspended CronJobs should not produce any missed schedule metrics
-	mfs, _ := collector.Registry.Gather()
+	mfs, _ := collector.TestRegistry.Gather()
 	for _, mf := range mfs {
 		if mf.GetName() == "cronjob_monitor_missed_schedules_total" {
 			assert.Empty(t, mf.GetMetric(), "suspended CronJob should not produce missed schedule metrics")
@@ -174,7 +174,7 @@ func TestCheckCronJobSchedule_ActiveJobsPrevents(t *testing.T) {
 	tracker.checkCronJobSchedule(ctx, cj, time.Now())
 
 	// Should NOT record missed schedule because there's an active job
-	mfs, _ := collector.Registry.Gather()
+	mfs, _ := collector.TestRegistry.Gather()
 	for _, mf := range mfs {
 		if mf.GetName() == "cronjob_monitor_missed_schedules_total" {
 			for _, m := range mf.GetMetric() {

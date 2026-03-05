@@ -44,14 +44,16 @@ func ComputeStatus(cronJob *batchv1.CronJob, ownedJobs []batchv1.Job) *CronJobSt
 
 	// Sort jobs by start time, most recent first
 	sort.Slice(ownedJobs, func(i, j int) bool {
-		ti := jobStartTime(&ownedJobs[i])
-		tj := jobStartTime(&ownedJobs[j])
-		return ti.After(tj)
+		return JobStartTime(&ownedJobs[i]).After(JobStartTime(&ownedJobs[j]))
 	})
 
-	// Compute counts and find last success/failure times
+	// Single pass: counts, last exec status/duration, schedule delay
+	foundLastCompleted := false
+	foundScheduleDelay := false
+
 	for i := range ownedJobs {
 		job := &ownedJobs[i]
+
 		if IsJobSuccessful(job) {
 			status.SuccessCount++
 			if job.Status.CompletionTime != nil {
@@ -67,45 +69,29 @@ func ComputeStatus(cronJob *batchv1.CronJob, ownedJobs []batchv1.Job) *CronJobSt
 				status.LastFailureTime = failTime
 			}
 		}
-	}
 
-	// Find the most recent completed job for last exec status/duration
-	for i := range ownedJobs {
-		job := &ownedJobs[i]
-		if !IsJobComplete(job) {
-			continue
+		if !foundLastCompleted && IsJobComplete(job) {
+			if IsJobSuccessful(job) {
+				status.LastExecStatus = 1
+			} else {
+				status.LastExecStatus = 0
+			}
+			if job.Status.CompletionTime != nil && job.Status.StartTime != nil {
+				status.LastExecDuration = job.Status.CompletionTime.Sub(job.Status.StartTime.Time).Seconds()
+			}
+			foundLastCompleted = true
 		}
-		if IsJobSuccessful(job) {
-			status.LastExecStatus = 1
-		} else {
-			status.LastExecStatus = 0
-		}
-		if job.Status.CompletionTime != nil && job.Status.StartTime != nil {
-			status.LastExecDuration = job.Status.CompletionTime.Sub(job.Status.StartTime.Time).Seconds()
-		}
-		break // most recent completed job
-	}
 
-	// Compute schedule delay from the most recent job with a start time
-	for i := range ownedJobs {
-		job := &ownedJobs[i]
-		if job.Status.StartTime != nil && cronJob.Status.LastScheduleTime != nil {
+		if !foundScheduleDelay && job.Status.StartTime != nil && cronJob.Status.LastScheduleTime != nil {
 			delay := job.Status.StartTime.Sub(cronJob.Status.LastScheduleTime.Time).Seconds()
 			if delay >= 0 {
 				status.ScheduleDelay = delay
 			}
-			break
+			foundScheduleDelay = true
 		}
 	}
 
 	return status
-}
-
-func jobStartTime(job *batchv1.Job) time.Time {
-	if job.Status.StartTime != nil {
-		return job.Status.StartTime.Time
-	}
-	return job.CreationTimestamp.Time
 }
 
 func jobFailureTime(job *batchv1.Job) float64 {
@@ -118,6 +104,14 @@ func jobFailureTime(job *batchv1.Job) float64 {
 		return float64(job.Status.StartTime.Unix())
 	}
 	return float64(job.CreationTimestamp.Unix())
+}
+
+// JobStartTime returns the effective start time for sorting.
+func JobStartTime(job *batchv1.Job) time.Time {
+	if job.Status.StartTime != nil {
+		return job.Status.StartTime.Time
+	}
+	return job.CreationTimestamp.Time
 }
 
 // IsJobComplete checks if a job has completed (success or failure).

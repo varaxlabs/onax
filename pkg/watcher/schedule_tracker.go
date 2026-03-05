@@ -2,6 +2,7 @@ package watcher
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	batchv1 "k8s.io/api/batch/v1"
@@ -19,15 +20,21 @@ type ScheduleTracker struct {
 	collector     *metrics.Collector
 	gracePeriod   time.Duration
 	checkInterval time.Duration
+
+	// Track which nextRun times have already been reported as missed,
+	// keyed by "namespace/name". Prevents repeated counter increments.
+	reportedMisses map[string]time.Time
+	mu             sync.Mutex
 }
 
 // NewScheduleTracker creates a new schedule tracker.
 func NewScheduleTracker(c client.Client, collector *metrics.Collector) *ScheduleTracker {
 	return &ScheduleTracker{
-		client:        c,
-		collector:     collector,
-		gracePeriod:   5 * time.Minute,
-		checkInterval: 1 * time.Minute,
+		client:         c,
+		collector:      collector,
+		gracePeriod:    5 * time.Minute,
+		checkInterval:  1 * time.Minute,
+		reportedMisses: make(map[string]time.Time),
 	}
 }
 
@@ -111,15 +118,26 @@ func (t *ScheduleTracker) checkCronJobSchedule(ctx context.Context, cronJob *bat
 
 		if !hasActiveJobs {
 			if cronJob.Status.LastScheduleTime == nil || cronJob.Status.LastScheduleTime.Time.Before(nextRun) {
-				logger.Info("Missed schedule detected",
-					"namespace", cronJob.Namespace,
-					"name", cronJob.Name,
-					"schedule", cronJob.Spec.Schedule,
-					"expectedRun", nextRun,
-					"overdueBy", now.Sub(nextRun),
-				)
+				key := cronJob.Namespace + "/" + cronJob.Name
 
-				t.collector.RecordMissedSchedule(cronJob.Namespace, cronJob.Name)
+				t.mu.Lock()
+				lastReported := t.reportedMisses[key]
+				alreadyReported := !lastReported.IsZero() && !lastReported.Before(nextRun)
+				if !alreadyReported {
+					t.reportedMisses[key] = nextRun
+				}
+				t.mu.Unlock()
+
+				if !alreadyReported {
+					logger.Info("Missed schedule detected",
+						"namespace", cronJob.Namespace,
+						"name", cronJob.Name,
+						"schedule", cronJob.Spec.Schedule,
+						"expectedRun", nextRun,
+						"overdueBy", now.Sub(nextRun),
+					)
+					t.collector.RecordMissedSchedule(cronJob.Namespace, cronJob.Name)
+				}
 			}
 		}
 	}
