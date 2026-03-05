@@ -36,3 +36,7 @@ tmp/
 
 # Build artifacts
 dist/
+
+# Project docs (local only)
+TODO.md
+prd-addendum.md
