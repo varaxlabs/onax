@@ -2,8 +2,8 @@ apiVersion: v2
 name: onax
 description: Dead-simple CronJob monitoring for Kubernetes with Prometheus and Grafana
 type: application
-version: 0.1.0 # x-release-please-version
-appVersion: "0.1.0" # x-release-please-version
+version: 0.1.1
+appVersion: 0.1.0
 keywords:
   - kubernetes
   - cronjob
